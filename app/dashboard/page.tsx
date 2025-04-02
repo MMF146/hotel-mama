@@ -4,38 +4,56 @@ import { useState, useEffect } from "react"
 import { useLanguage } from "@/lib/i18n/LanguageContext"
 import { LanguageSelector } from "@/components/ui/language-selector"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { FoodOrderDialog } from "@/components/ui/food-order-dialog"
+import { Card } from "@/components/ui/card"
 import {
   Menu,
-  Plus,
-  Filter,
-  Utensils,
-  ShoppingBag,
-  Truck
+  ArrowRight,
+  ArrowLeft,
+  Calendar as CalendarIcon
 } from "lucide-react"
+import { format } from "date-fns"
+import {
+  LineChart,
+  Line,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip
+} from "recharts"
+
+const revenueData = [
+  { name: 'Mon', value: 2500 },
+  { name: 'Tue', value: 3500 },
+  { name: 'Wed', value: 3300 },
+  { name: 'Thu', value: 2000 },
+  { name: 'Fri', value: 3200 },
+  { name: 'Sat', value: 3800 }
+]
+
+const guestsData = [
+  { name: 'Mon', value: 35 },
+  { name: 'Tue', value: 52 },
+  { name: 'Wed', value: 45 },
+  { name: 'Thu', value: 30 },
+  { name: 'Fri', value: 40 }
+]
+
+const roomsData = [
+  { name: 'Mon', Occupied: 30, Booked: 10, Available: 10 },
+  { name: 'Tue', Occupied: 25, Booked: 15, Available: 10 },
+  { name: 'Wed', Occupied: 28, Booked: 12, Available: 10 },
+  { name: 'Thu', Occupied: 32, Booked: 8, Available: 10 },
+  { name: 'Fri', Occupied: 35, Booked: 10, Available: 5 },
+  { name: 'Sat', Occupied: 38, Booked: 7, Available: 5 }
+]
 
 export default function Dashboard() {
   const { t } = useLanguage()
   const [isMobile, setIsMobile] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [activeSection, setActiveSection] = useState("dashboard")
-  const [orders, setOrders] = useState([])
-  const [isLoading, setIsLoading] = useState(false)
-
-  const loadOrders = async () => {
-    try {
-      setIsLoading(true)
-      const response = await fetch('/api/food-orders')
-      if (!response.ok) throw new Error('Failed to load orders')
-      const data = await response.json()
-      setOrders(data)
-    } catch (error) {
-      console.error('Error loading orders:', error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
 
   useEffect(() => {
     const handleResize = () => {
@@ -44,7 +62,6 @@ export default function Dashboard() {
 
     handleResize()
     window.addEventListener("resize", handleResize)
-    loadOrders()
 
     return () => {
       window.removeEventListener("resize", handleResize)
@@ -52,101 +69,215 @@ export default function Dashboard() {
   }, [])
 
   const renderDashboard = () => (
-    <div>
-      <h2 className="text-2xl font-bold mb-6">{t('navigation', 'dashboard')}</h2>
-      {/* Contenido del dashboard */}
+    <div className="space-y-6">
+      {/* Key Metrics */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <Card className="bg-white p-8 shadow-sm">
+          <div className="flex items-center gap-6">
+            <div className="bg-blue-50 p-4 rounded-lg">
+              <ArrowRight className="h-7 w-7 text-blue-600" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-2xl font-bold">73</span>
+                <span className="text-sm text-green-500">+24%</span>
+              </div>
+              <p className="text-sm text-gray-500">Arrival (This week)</p>
+              <p className="text-xs text-gray-400">Previous week: 35</p>
+            </div>
+          </div>
+        </Card>
+
+        <Card className="bg-white p-8 shadow-sm">
+          <div className="flex items-center gap-6">
+            <div className="bg-amber-50 p-4 rounded-lg">
+              <ArrowLeft className="h-7 w-7 text-amber-600" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-2xl font-bold">35</span>
+                <span className="text-sm text-red-500">-12%</span>
+              </div>
+              <p className="text-sm text-gray-500">Departure (This week)</p>
+              <p className="text-xs text-gray-400">Previous week: 97</p>
+            </div>
+          </div>
+        </Card>
+
+        <Card className="bg-white p-8 shadow-sm">
+          <div className="flex items-center gap-6">
+            <div className="bg-blue-50 p-4 rounded-lg">
+              <CalendarIcon className="h-7 w-7 text-blue-600" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-2xl font-bold">237</span>
+                <span className="text-sm text-green-500">+31%</span>
+              </div>
+              <p className="text-sm text-gray-500">Booking (This week)</p>
+              <p className="text-xs text-gray-400">Previous week: 187</p>
+            </div>
+          </div>
+        </Card>
+
+        <Card className="bg-white p-8 shadow-sm">
+          <h3 className="text-lg font-semibold mb-4">Today Activities</h3>
+          <div className="flex gap-4 justify-between">
+            <div className="text-center">
+              <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white text-lg font-semibold mb-1">
+                5
+              </div>
+              <p className="text-xs">Room<br/>Available</p>
+            </div>
+            <div className="text-center">
+              <div className="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center text-white text-lg font-semibold mb-1">
+                10
+              </div>
+              <p className="text-xs">Room<br/>Blocked</p>
+            </div>
+            <div className="text-center">
+              <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-white text-lg font-semibold mb-1">
+                15
+              </div>
+              <p className="text-xs">Guest</p>
+            </div>
+          </div>
+          <div className="mt-4 pt-4 border-t">
+            <p className="text-sm text-gray-500">Total Revenue</p>
+            <p className="text-xl font-bold">Rs.35k</p>
+          </div>
+        </Card>
+      </div>
+
+      {/* Charts */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Revenue Chart */}
+        <Card className="bg-white p-6 shadow-sm">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-lg font-semibold">Revenue</h3>
+            <select className="text-sm border rounded-md px-3 py-1.5 bg-gray-50 text-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500">
+              <option>this week</option>
+            </select>
+          </div>
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={revenueData} barSize={30}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} />
+                <YAxis axisLine={false} tickLine={false} />
+                <Tooltip cursor={{fill: 'rgba(245, 158, 11, 0.1)'}} />
+                <Bar dataKey="value" fill="#f59e0b" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
+
+        {/* Guests Chart */}
+        <Card className="bg-white p-6 shadow-sm">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-lg font-semibold">Guests</h3>
+            <select className="text-sm border rounded-md px-3 py-1.5 bg-gray-50 text-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500">
+              <option>this week</option>
+            </select>
+          </div>
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={guestsData}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} />
+                <YAxis axisLine={false} tickLine={false} />
+                <Tooltip />
+                <Line 
+                  type="monotone" 
+                  dataKey="value" 
+                  stroke="#3b82f6" 
+                  strokeWidth={3}
+                  dot={{ fill: "#fff", stroke: "#3b82f6", strokeWidth: 2, r: 4 }}
+                  activeDot={{ r: 6, fill: "#3b82f6" }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
+
+        {/* Rooms Chart */}
+        <Card className="bg-white p-6 shadow-sm">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-lg font-semibold">Rooms</h3>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-6 text-sm">
+                <div className="flex items-center gap-1">
+                  <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                  <span>Occupied</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                  <span>Booked</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <div className="w-3 h-3 rounded-full bg-amber-500"></div>
+                  <span>Available</span>
+                </div>
+              </div>
+              <select className="text-sm border rounded-md px-3 py-1.5 bg-gray-50 text-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                <option>this week</option>
+              </select>
+            </div>
+          </div>
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={roomsData} barSize={20}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} />
+                <YAxis axisLine={false} tickLine={false} />
+                <Tooltip />
+                <Bar dataKey="Occupied" stackId="a" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="Booked" stackId="a" fill="#22c55e" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="Available" stackId="a" fill="#f59e0b" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
+      </div>
+
+      {/* Today's Booking Section */}
+      <Card className="bg-white p-6 shadow-sm">
+        <div className="flex items-center gap-2 mb-4">
+          <h3 className="text-lg font-semibold">Todays Booking</h3>
+          <span className="text-sm text-gray-500">(8 Guest today)</span>
+        </div>
+        <div className="flex gap-4">
+          <Button variant="ghost" className="text-gray-600 hover:bg-gray-50 hover:text-gray-900">Status</Button>
+          <Button variant="ghost" className="text-gray-600 hover:bg-gray-50 hover:text-gray-900">Packages</Button>
+          <Button variant="ghost" className="text-gray-600 hover:bg-gray-50 hover:text-gray-900">Arrivals</Button>
+          <Button variant="ghost" className="text-gray-600 hover:bg-gray-50 hover:text-gray-900">Departure</Button>
+        </div>
+      </Card>
     </div>
   )
 
   return (
-    <div className="flex h-screen bg-gray-100">
-      {/* Main Content */}
+    <div className="flex h-screen bg-gray-50">
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Header */}
-        <header className="bg-white border-b border-gray-200 flex items-center justify-between px-4 py-4 md:px-6">
+        <header className="bg-white shadow-sm border-b border-gray-200 flex items-center justify-between px-6 py-4">
           <div className="flex items-center">
             {isMobile && (
-              <Button variant="ghost" size="icon" className="mr-2" onClick={() => setSidebarOpen(true)}>
+              <Button variant="ghost" size="icon" className="mr-3" onClick={() => setSidebarOpen(true)}>
                 <Menu className="h-5 w-5" />
               </Button>
             )}
-            <h1 className="text-xl font-semibold text-gray-800">
-              {t('navigation', activeSection === "dashboard"
-                ? "dashboard"
-                : activeSection === "food-delivery"
-                  ? "foodDelivery"
-                  : activeSection)}
-            </h1>
+            <h1 className="text-xl font-semibold text-gray-900">Dashboard</h1>
           </div>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center gap-6">
+            <span className="text-sm text-gray-600 font-medium">
+              {format(new Date(), 'EEE // MMMM do, yyyy')}
+            </span>
             <LanguageSelector />
           </div>
         </header>
 
-        {/* Main Content */}
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50">
-          {activeSection === "dashboard" && renderDashboard()}
-          {activeSection === "food-delivery" && (
-            <>
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-semibold">{t('foodDelivery', 'title')}</h2>
-                <div className="flex gap-2">
-                  <Button variant="outline" size="sm" className="flex items-center gap-1">
-                    <Filter className="h-4 w-4" />
-                    {t('common', 'filter')}
-                  </Button>
-                  <FoodOrderDialog
-                    trigger={
-                      <Button size="sm" className="flex items-center gap-1">
-                        <Plus className="h-4 w-4" />
-                        {t('foodDelivery', 'newOrder')}
-                      </Button>
-                    }
-                    onOrderCreated={loadOrders}
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                <Card>
-                  <CardContent className="p-4 flex items-center">
-                    <div className="bg-blue-50 p-3 rounded-full mr-4">
-                      <Utensils className="h-6 w-6 text-blue-500" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-500">{t('foodDelivery', 'totalOrders')}</p>
-                      <h3 className="text-2xl font-bold">42</h3>
-                      <p className="text-xs text-green-600">+8% from yesterday</p>
-                    </div>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardContent className="p-4 flex items-center">
-                    <div className="bg-green-50 p-3 rounded-full mr-4">
-                      <ShoppingBag className="h-6 w-6 text-green-500" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-500">{t('foodDelivery', 'completed')}</p>
-                      <h3 className="text-2xl font-bold">35</h3>
-                      <p className="text-xs text-green-600">83% of total</p>
-                    </div>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardContent className="p-4 flex items-center">
-                    <div className="bg-amber-50 p-3 rounded-full mr-4">
-                      <Truck className="h-6 w-6 text-amber-500" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-500">{t('foodDelivery', 'inProgress')}</p>
-                      <h3 className="text-2xl font-bold">7</h3>
-                      <p className="text-xs text-amber-600">17% of total</p>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </>
-          )}
+        <main className="flex-1 overflow-y-auto p-6 bg-gray-50">
+          {renderDashboard()}
         </main>
       </div>
     </div>
