@@ -1,91 +1,163 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import Image from "next/image"
+import { useEffect, useState, useRef } from "react"
 import {
-  BarChart,
-  ChevronLeft,
-  ChevronRight,
-  Search,
-  Plus,
-  Edit,
-  Trash,
-  ChevronDown,
+  Activity,
+  AlertCircle,
+  BarChart3,
   Bell,
-  Home,
-  CalendarIcon,
-  MessageSquare,
-  Star,
-  Award,
-  CreditCard,
-  Utensils,
-  ShoppingBag,
-  Truck,
-  Clock,
-  DollarSign,
-  Filter,
+  CircleOff,
+  Command,
+  Cpu,
+  Database,
   Download,
-  Printer,
-  MoreHorizontal,
-  Menu,
+  Globe,
+  HardDrive,
+  Hexagon,
+  LineChart,
+  Lock,
+  type LucideIcon,
+  MessageSquare,
+  Mic,
+  Moon,
+  Radio,
+  RefreshCw,
+  Search,
+  Settings,
+  Shield,
+  Sun,
+  Terminal,
+  Wifi,
+  Zap,
 } from "lucide-react"
+
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from "@/components/ui/card"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Slider } from "@/components/ui/slider"
+import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Textarea } from "@/components/ui/textarea"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { useToast } from "@/components/ui/use-toast"
-import {
-  Bar,
-  BarChart as RechartsBarChart,
-  Line,
-  LineChart as RechartsLineChart,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-} from "recharts"
 
 export default function Dashboard() {
-  const [activeTab, setActiveTab] = useState("stays")
-  const [activeSection, setActiveSection] = useState("dashboard")
-  const [isMobile, setIsMobile] = useState(false)
-  const [sidebarOpen, setSidebarOpen] = useState(false)
-  const { toast } = useToast()
+  const [theme, setTheme] = useState<"dark" | "light">("dark")
+  const [systemStatus, setSystemStatus] = useState(85)
+  const [cpuUsage, setCpuUsage] = useState(42)
+  const [memoryUsage, setMemoryUsage] = useState(68)
+  const [networkStatus, setNetworkStatus] = useState(92)
+  const [securityLevel, setSecurityLevel] = useState(75)
+  const [currentTime, setCurrentTime] = useState(new Date())
+  const [isLoading, setIsLoading] = useState(true)
 
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+
+  // Simulate data loading
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768)
+    const timer = setTimeout(() => {
+      setIsLoading(false)
+    }, 2000)
+
+    return () => clearTimeout(timer)
+  }, [])
+
+  // Update time
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(new Date())
+    }, 1000)
+
+    return () => clearInterval(interval)
+  }, [])
+
+  // Simulate changing data
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCpuUsage(Math.floor(Math.random() * 30) + 30)
+      setMemoryUsage(Math.floor(Math.random() * 20) + 60)
+      setNetworkStatus(Math.floor(Math.random() * 15) + 80)
+      setSystemStatus(Math.floor(Math.random() * 10) + 80)
+    }, 3000)
+
+    return () => clearInterval(interval)
+  }, [])
+
+  // Particle effect
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+
+    const ctx = canvas.getContext("2d")
+    if (!ctx) return
+
+    canvas.width = canvas.offsetWidth
+    canvas.height = canvas.offsetHeight
+
+    const particles: Particle[] = []
+    const particleCount = 100
+
+    class Particle {
+      x: number
+      y: number
+      size: number
+      speedX: number
+      speedY: number
+      color: string
+
+      constructor() {
+        this.x = Math.random() * canvas.width
+        this.y = Math.random() * canvas.height
+        this.size = Math.random() * 3 + 1
+        this.speedX = (Math.random() - 0.5) * 0.5
+        this.speedY = (Math.random() - 0.5) * 0.5
+        this.color = `rgba(${Math.floor(Math.random() * 100) + 100}, ${Math.floor(Math.random() * 100) + 150}, ${Math.floor(Math.random() * 55) + 200}, ${Math.random() * 0.5 + 0.2})`
+      }
+
+      update() {
+        this.x += this.speedX
+        this.y += this.speedY
+
+        if (this.x > canvas.width) this.x = 0
+        if (this.x < 0) this.x = canvas.width
+        if (this.y > canvas.height) this.y = 0
+        if (this.y < 0) this.y = canvas.height
+      }
+
+      draw() {
+        if (!ctx) return
+        ctx.fillStyle = this.color
+        ctx.beginPath()
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2)
+        ctx.fill()
+      }
     }
 
-    handleResize()
+    for (let i = 0; i < particleCount; i++) {
+      particles.push(new Particle())
+    }
+
+    function animate() {
+      if (!ctx || !canvas) return
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+      for (const particle of particles) {
+        particle.update()
+        particle.draw()
+      }
+
+      requestAnimationFrame(animate)
+    }
+
+    animate()
+
+    const handleResize = () => {
+      if (!canvas) return
+      canvas.width = canvas.offsetWidth
+      canvas.height = canvas.offsetHeight
+    }
+
     window.addEventListener("resize", handleResize)
 
     return () => {
@@ -93,1523 +165,964 @@ export default function Dashboard() {
     }
   }, [])
 
-  // Sample data for charts
-  const revenueData = [
-    { name: "Sun", value: 8 },
-    { name: "Mon", value: 10 },
-    { name: "Tue", value: 12 },
-    { name: "Wed", value: 11 },
-    { name: "Thu", value: 9 },
-    { name: "Fri", value: 11 },
-    { name: "Sat", value: 12 },
-  ]
+  // Toggle theme
+  const toggleTheme = () => {
+    setTheme(theme === "dark" ? "light" : "dark")
+  }
 
-  const guestsData = [
-    { name: "Sun", value: 8000 },
-    { name: "Mon", value: 10000 },
-    { name: "Tue", value: 12000 },
-    { name: "Wed", value: 9000 },
-    { name: "Thu", value: 6000 },
-    { name: "Fri", value: 8000 },
-  ]
+  // Format time
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString("en-US", {
+      hour12: false,
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    })
+  }
 
-  const roomsData = [
-    { name: "Sun", occupied: 15, booked: 10, available: 25 },
-    { name: "Mon", occupied: 20, booked: 12, available: 18 },
-    { name: "Tue", occupied: 18, booked: 15, available: 17 },
-    { name: "Wed", occupied: 22, booked: 10, available: 18 },
-    { name: "Thu", occupied: 20, booked: 15, available: 15 },
-    { name: "Fri", occupied: 18, booked: 12, available: 20 },
-    { name: "Sat", occupied: 15, booked: 10, available: 25 },
-  ]
-
-  const foodOrdersData = [
-    { name: "Breakfast", value: 35 },
-    { name: "Lunch", value: 45 },
-    { name: "Dinner", value: 55 },
-    { name: "Room Service", value: 25 },
-  ]
-
-  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"]
-
-  const bookingData = [
-    {
-      id: 1,
-      name: "Ram Kailash",
-      phone: "9905598912",
-      bookingId: "SDK89635",
-      nights: 2,
-      roomType: "1 King Room",
-      guests: 2,
-      paid: "rsp.150",
-      cost: "rsp.1500",
-      avatar: "/placeholder.svg?height=32&width=32",
-    },
-    {
-      id: 2,
-      name: "Samira Karki",
-      phone: "9815394203",
-      bookingId: "SDK89635",
-      nights: 4,
-      roomType: ["1 Queen", "1 King Room"],
-      guests: 5,
-      paid: "paid",
-      cost: "rsp.5500",
-      avatar: "/placeholder.svg?height=32&width=32",
-    },
-    {
-      id: 3,
-      name: "Jeevan Rai",
-      phone: "9865328452",
-      bookingId: "SDK89635",
-      nights: 1,
-      roomType: ["1 Deluxe", "1 King Room"],
-      guests: 3,
-      paid: "rsp.150",
-      cost: "rsp.2500",
-      avatar: "/placeholder.svg?height=32&width=32",
-    },
-    {
-      id: 4,
-      name: "Bindu Sharma",
-      phone: "9845653124",
-      bookingId: "SDK89635",
-      nights: 3,
-      roomType: ["1 Deluxe", "1 King Room"],
-      guests: 2,
-      paid: "rsp.150",
-      cost: "rsp.3000",
-      avatar: "/placeholder.svg?height=32&width=32",
-    },
-  ]
-
-  const foodOrders = [
-    {
-      id: "FO-1234",
-      guest: "Ram Kailash",
-      room: "101",
-      items: ["Chicken Curry", "Naan Bread", "Rice"],
-      total: "rsp.850",
-      status: "Delivered",
-      time: "12:30 PM",
-    },
-    {
-      id: "FO-1235",
-      guest: "Samira Karki",
-      room: "205",
-      items: ["Vegetable Pasta", "Garlic Bread", "Tiramisu"],
-      total: "rsp.1200",
-      status: "Preparing",
-      time: "1:15 PM",
-    },
-    {
-      id: "FO-1236",
-      guest: "Jeevan Rai",
-      room: "310",
-      items: ["Club Sandwich", "French Fries", "Coke"],
-      total: "rsp.650",
-      status: "On the way",
-      time: "1:45 PM",
-    },
-  ]
-
-  const invoices = [
-    {
-      id: "INV-2023-001",
-      guest: "Ram Kailash",
-      date: "26 Jul 2023",
-      amount: "rsp.1500",
-      status: "Paid",
-      items: [
-        { description: "Room Charges (2 nights)", amount: "rsp.1200" },
-        { description: "Food & Beverages", amount: "rsp.300" },
-      ],
-    },
-    {
-      id: "INV-2023-002",
-      guest: "Samira Karki",
-      date: "25 Jul 2023",
-      amount: "rsp.5500",
-      status: "Paid",
-      items: [
-        { description: "Room Charges (4 nights)", amount: "rsp.4800" },
-        { description: "Food & Beverages", amount: "rsp.700" },
-      ],
-    },
-    {
-      id: "INV-2023-003",
-      guest: "Jeevan Rai",
-      date: "24 Jul 2023",
-      amount: "rsp.2500",
-      status: "Pending",
-      items: [
-        { description: "Room Charges (1 night)", amount: "rsp.2000" },
-        { description: "Food & Beverages", amount: "rsp.500" },
-      ],
-    },
-  ]
-
-  const calendarEvents = [
-    { date: 2, guest: "Carl Larson II", nights: 2, guests: 2 },
-    { date: 9, guest: "Mrs. Emmett Morar", nights: 2, guests: 2 },
-    { date: 24, guest: "Marjorie Klocko", nights: 2, guests: 2 },
-  ]
-
-  const renderDashboard = () => (
-    <>
-      <div className="flex justify-end mb-4">
-        <p className="text-sm text-gray-600">Wed // July 26th, 2023</p>
-      </div>
-
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6">
-        <Card>
-          <CardContent className="p-4 flex items-center">
-            <div className="bg-blue-50 p-3 rounded-full mr-4">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 text-blue-500"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M5 12h14"></path>
-                <path d="M12 5l7 7-7 7"></path>
-              </svg>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">
-                Arrival <span className="text-xs">(This week)</span>
-              </p>
-              <div className="flex items-center">
-                <h3 className="text-2xl font-bold mr-2">73</h3>
-                <span className="text-xs px-1.5 py-0.5 bg-green-100 text-green-600 rounded">+24%</span>
-              </div>
-              <p className="text-xs text-gray-500">Previous week: 35</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4 flex items-center">
-            <div className="bg-amber-50 p-3 rounded-full mr-4">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 text-amber-500"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M19 12H5"></path>
-                <path d="M12 19l-7-7 7-7"></path>
-              </svg>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">
-                Departure <span className="text-xs">(This week)</span>
-              </p>
-              <div className="flex items-center">
-                <h3 className="text-2xl font-bold mr-2">35</h3>
-                <span className="text-xs px-1.5 py-0.5 bg-red-100 text-red-600 rounded">-12%</span>
-              </div>
-              <p className="text-xs text-gray-500">Previous week: 97</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4 flex items-center">
-            <div className="bg-cyan-50 p-3 rounded-full mr-4">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 text-cyan-500"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                <line x1="16" y1="2" x2="16" y2="6"></line>
-                <line x1="8" y1="2" x2="8" y2="6"></line>
-                <line x1="3" y1="10" x2="21" y2="10"></line>
-              </svg>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">
-                Booking <span className="text-xs">(This week)</span>
-              </p>
-              <div className="flex items-center">
-                <h3 className="text-2xl font-bold mr-2">237</h3>
-                <span className="text-xs px-1.5 py-0.5 bg-green-100 text-green-600 rounded">+31%</span>
-              </div>
-              <p className="text-xs text-gray-500">Previous week: 187</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <p className="text-sm text-gray-500 mb-2">Today Activities</p>
-            <div className="flex justify-between mb-2">
-              <div className="text-center">
-                <div className="bg-blue-500 text-white rounded-full w-10 h-10 flex items-center justify-center mx-auto mb-1">
-                  <span>5</span>
-                </div>
-                <p className="text-xs">
-                  Room
-                  <br />
-                  Available
-                </p>
-              </div>
-              <div className="text-center">
-                <div className="bg-blue-500 text-white rounded-full w-10 h-10 flex items-center justify-center mx-auto mb-1">
-                  <span>10</span>
-                </div>
-                <p className="text-xs">
-                  Room
-                  <br />
-                  Blocked
-                </p>
-              </div>
-              <div className="text-center">
-                <div className="bg-blue-500 text-white rounded-full w-10 h-10 flex items-center justify-center mx-auto mb-1">
-                  <span>15</span>
-                </div>
-                <p className="text-xs">Guest</p>
-              </div>
-            </div>
-            <div className="mt-4">
-              <p className="text-xs text-gray-500">Total Revenue</p>
-              <p className="text-lg font-bold">Rs.35k</p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Charts */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-6">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between p-4 pb-2">
-            <CardTitle className="text-base font-medium">Revenue</CardTitle>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="h-8 text-xs">
-                  this week <ChevronDown className="ml-1 h-3 w-3" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem>This Month</DropdownMenuItem>
-                <DropdownMenuItem>This Year</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </CardHeader>
-          <CardContent className="p-4 pt-0">
-            <div className="h-[200px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <RechartsBarChart data={revenueData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                  <XAxis dataKey="name" axisLine={false} tickLine={false} />
-                  <YAxis hide={true} />
-                  <Tooltip
-                    content={({ active, payload }) => {
-                      if (active && payload && payload.length) {
-                        return (
-                          <div className="bg-white p-2 border rounded shadow-sm">
-                            <p className="text-xs">{`${payload[0].value} K`}</p>
-                          </div>
-                        )
-                      }
-                      return null
-                    }}
-                  />
-                  <Bar dataKey="value" fill="#F59E0B" radius={[4, 4, 0, 0]} />
-                </RechartsBarChart>
-              </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between p-4 pb-2">
-            <CardTitle className="text-base font-medium">Guests</CardTitle>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="h-8 text-xs">
-                  this week <ChevronDown className="ml-1 h-3 w-3" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem>This Month</DropdownMenuItem>
-                <DropdownMenuItem>This Year</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </CardHeader>
-          <CardContent className="p-4 pt-0">
-            <div className="h-[200px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <RechartsLineChart data={guestsData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                  <XAxis dataKey="name" axisLine={false} tickLine={false} />
-                  <YAxis hide={true} />
-                  <Tooltip
-                    content={({ active, payload }) => {
-                      if (active && payload && payload.length) {
-                        return (
-                          <div className="bg-white p-2 border rounded shadow-sm">
-                            <p className="text-xs">{`${payload[0].value}`}</p>
-                          </div>
-                        )
-                      }
-                      return null
-                    }}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="value"
-                    stroke="#3B82F6"
-                    strokeWidth={2}
-                    dot={{ r: 4, fill: "white", stroke: "#3B82F6", strokeWidth: 2 }}
-                    activeDot={{ r: 6 }}
-                    fill="url(#colorUv)"
-                  />
-                  <defs>
-                    <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.2} />
-                      <stop offset="95%" stopColor="#3B82F6" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <area type="monotone" dataKey="value" stroke="none" fill="url(#colorUv)" />
-                </RechartsLineChart>
-              </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between p-4 pb-2">
-            <CardTitle className="text-base font-medium">Rooms</CardTitle>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="h-8 text-xs">
-                  this week <ChevronDown className="ml-1 h-3 w-3" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem>This Month</DropdownMenuItem>
-                <DropdownMenuItem>This Year</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </CardHeader>
-          <CardContent className="p-4 pt-0">
-            <div className="text-xs mb-2">
-              <div className="flex items-center justify-between">
-                <p>Total 50 Rooms</p>
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-1">
-                    <span className="h-2 w-2 rounded-full bg-blue-500"></span>
-                    <span>Occupied</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <span className="h-2 w-2 rounded-full bg-green-500"></span>
-                    <span>Booked</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <span className="h-2 w-2 rounded-full bg-amber-500"></span>
-                    <span>Available</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="h-[180px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <RechartsBarChart data={roomsData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                  <XAxis dataKey="name" axisLine={false} tickLine={false} />
-                  <YAxis hide={true} />
-                  <Tooltip
-                    content={({ active, payload }) => {
-                      if (active && payload && payload.length) {
-                        return (
-                          <div className="bg-white p-2 border rounded shadow-sm">
-                            <p className="text-xs">{`Occupied: ${payload[0].value}`}</p>
-                            <p className="text-xs">{`Booked: ${payload[1].value}`}</p>
-                            <p className="text-xs">{`Available: ${payload[2].value}`}</p>
-                          </div>
-                        )
-                      }
-                      return null
-                    }}
-                  />
-                  <Bar dataKey="occupied" fill="#3B82F6" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="booked" fill="#10B981" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="available" fill="#F59E0B" radius={[4, 4, 0, 0]} />
-                </RechartsBarChart>
-              </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Booking Table */}
-      <Card className="mb-6">
-        <CardHeader className="p-4 pb-0">
-          <CardTitle className="text-base font-medium">
-            Todays Booking <span className="text-xs font-normal text-gray-500">(8 Guest today)</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-4">
-          <Tabs defaultValue="stays" className="w-full">
-            <TabsList className="mb-4 border-b w-full justify-start rounded-none bg-transparent p-0">
-              <TabsTrigger
-                value="stays"
-                className="rounded-none border-b-2 border-transparent px-4 py-2 data-[state=active]:border-blue-500 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
-                onClick={() => setActiveTab("stays")}
-              >
-                Stays
-              </TabsTrigger>
-              <TabsTrigger
-                value="packages"
-                className="rounded-none border-b-2 border-transparent px-4 py-2 data-[state=active]:border-blue-500 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
-                onClick={() => setActiveTab("packages")}
-              >
-                Packages
-              </TabsTrigger>
-              <TabsTrigger
-                value="arrivals"
-                className="rounded-none border-b-2 border-transparent px-4 py-2 data-[state=active]:border-blue-500 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
-                onClick={() => setActiveTab("arrivals")}
-              >
-                Arrivals
-              </TabsTrigger>
-              <TabsTrigger
-                value="departure"
-                className="rounded-none border-b-2 border-transparent px-4 py-2 data-[state=active]:border-blue-500 data-[state=active]:bg-transparent data-[state=active]:shadow-none"
-                onClick={() => setActiveTab("departure")}
-              >
-                Departure
-              </TabsTrigger>
-            </TabsList>
-
-            <div className="flex flex-col md:flex-row justify-between mb-4 gap-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search guest by name or phone number or booking ID"
-                  className="pl-10 pr-4 py-2 border border-gray-300 rounded-md w-full md:w-[400px] text-sm"
-                />
-              </div>
-              <Button className="bg-blue-500 hover:bg-blue-600 text-white">
-                <Plus className="h-4 w-4 mr-2" />
-                Add Booking
-              </Button>
-            </div>
-
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="whitespace-nowrap">
-                      <div className="flex items-center">
-                        NAME <ChevronDown className="h-4 w-4 ml-1" />
-                      </div>
-                    </TableHead>
-                    <TableHead className="whitespace-nowrap">BOOKING ID</TableHead>
-                    <TableHead className="whitespace-nowrap">NIGHTS</TableHead>
-                    <TableHead className="whitespace-nowrap">ROOM TYPE</TableHead>
-                    <TableHead className="whitespace-nowrap">GUESTS</TableHead>
-                    <TableHead className="whitespace-nowrap">PAID</TableHead>
-                    <TableHead className="whitespace-nowrap">COST</TableHead>
-                    <TableHead className="whitespace-nowrap">ACTION</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {bookingData.map((booking) => (
-                    <TableRow key={booking.id}>
-                      <TableCell>
-                        <div className="flex items-center">
-                          <Avatar className="h-8 w-8 mr-3">
-                            <AvatarImage src={booking.avatar} alt={booking.name} />
-                            <AvatarFallback>
-                              {booking.name
-                                .split(" ")
-                                .map((n) => n[0])
-                                .join("")}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <p className="font-medium">{booking.name}</p>
-                            <p className="text-xs text-gray-500">{booking.phone}</p>
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>{booking.bookingId}</TableCell>
-                      <TableCell>{booking.nights}</TableCell>
-                      <TableCell>
-                        {Array.isArray(booking.roomType) ? (
-                          <div>
-                            {booking.roomType.map((type, index) => (
-                              <p key={index}>{type}</p>
-                            ))}
-                          </div>
-                        ) : (
-                          booking.roomType
-                        )}
-                      </TableCell>
-                      <TableCell>{booking.guests} Guests</TableCell>
-                      <TableCell>
-                        {booking.paid === "paid" ? (
-                          <span className="px-2 py-1 bg-green-100 text-green-600 rounded text-xs">paid</span>
-                        ) : (
-                          booking.paid
-                        )}
-                      </TableCell>
-                      <TableCell>{booking.cost}</TableCell>
-                      <TableCell>
-                        <div className="flex space-x-2">
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
-                            <Trash className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-            <div className="flex justify-end mt-4">
-              <Button variant="link" className="text-blue-500 hover:text-blue-600">
-                See other Bookings
-              </Button>
-            </div>
-          </Tabs>
-        </CardContent>
-      </Card>
-
-      {/* Calendar and Rating */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader className="p-4 pb-0">
-            <CardTitle className="text-base font-medium">Calender</CardTitle>
-          </CardHeader>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-4">
-              <Button variant="ghost" size="icon" className="h-8 w-8">
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              <h3 className="text-sm font-medium">August 2023</h3>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </div>
-            <div className="grid grid-cols-7 gap-1 text-center text-xs">
-              <div className="py-1 font-medium">SU</div>
-              <div className="py-1 font-medium">MO</div>
-              <div className="py-1 font-medium">TU</div>
-              <div className="py-1 font-medium">WE</div>
-              <div className="py-1 font-medium">TH</div>
-              <div className="py-1 font-medium">FR</div>
-              <div className="py-1 font-medium">SA</div>
-
-              <div className="py-1 text-gray-400">31</div>
-              <div className="py-1">1</div>
-              <div className="py-1 relative">
-                2
-                <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-blue-500 rounded-full"></span>
-              </div>
-              <div className="py-1">3</div>
-              <div className="py-1">4</div>
-              <div className="py-1">5</div>
-              <div className="py-1">6</div>
-
-              <div className="py-1">7</div>
-              <div className="py-1">8</div>
-              <div className="py-1 relative">
-                9
-                <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-blue-500 rounded-full"></span>
-              </div>
-              <div className="py-1">10</div>
-              <div className="py-1">11</div>
-              <div className="py-1">12</div>
-              <div className="py-1">13</div>
-
-              <div className="py-1">14</div>
-              <div className="py-1">15</div>
-              <div className="py-1">16</div>
-              <div className="py-1">17</div>
-              <div className="py-1">18</div>
-              <div className="py-1">19</div>
-              <div className="py-1">20</div>
-
-              <div className="py-1">21</div>
-              <div className="py-1">22</div>
-              <div className="py-1">23</div>
-              <div className="py-1 relative">
-                24
-                <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-blue-500 rounded-full"></span>
-              </div>
-              <div className="py-1">25</div>
-              <div className="py-1">26</div>
-              <div className="py-1">27</div>
-
-              <div className="py-1">28</div>
-              <div className="py-1">29</div>
-              <div className="py-1">30</div>
-              <div className="py-1">31</div>
-              <div className="py-1 text-gray-400">1</div>
-              <div className="py-1 text-gray-400">2</div>
-              <div className="py-1 text-gray-400">3</div>
-            </div>
-
-            <div className="mt-6 border rounded-md p-3">
-              <h4 className="text-sm font-medium mb-2">August 02, 2023 Booking Lists</h4>
-              <p className="text-xs text-gray-500 mb-3">(3 Bookings)</p>
-
-              <div className="space-y-3">
-                {calendarEvents.map((event, index) => (
-                  <div key={index} className="flex items-center">
-                    <Avatar className="h-8 w-8 mr-3">
-                      <AvatarImage src="/placeholder.svg?height=32&width=32" alt={event.guest} />
-                      <AvatarFallback>
-                        {event.guest
-                          .split(" ")
-                          .map((n) => n[0])
-                          .join("")}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="text-sm font-medium">{event.guest}</p>
-                      <p className="text-xs text-gray-500">
-                        {event.nights} Nights | {event.guests} Guests
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between p-4 pb-0">
-            <CardTitle className="text-base font-medium">Overall Rating</CardTitle>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="h-8 text-xs">
-                  This Week <ChevronDown className="ml-1 h-3 w-3" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem>This Month</DropdownMenuItem>
-                <DropdownMenuItem>This Year</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </CardHeader>
-          <CardContent className="p-4">
-            <div className="flex justify-center mb-6">
-              <div className="relative w-48 h-24">
-                <svg viewBox="0 0 100 50" className="w-full h-full">
-                  <path d="M 0 50 A 50 50 0 0 1 100 50" fill="none" stroke="#e5e7eb" strokeWidth="10" />
-                  <path d="M 0 50 A 50 50 0 0 1 90 50" fill="none" stroke="#3b82f6" strokeWidth="10" />
-                </svg>
-                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <div className="text-center">
-                    <p className="text-sm font-medium">Rating</p>
-                    <p className="text-2xl font-bold">4.5/5</p>
-                    <span className="text-xs px-1.5 py-0.5 bg-green-100 text-green-600 rounded">+31%</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-sm">Cleanliness</span>
-                <div className="flex items-center gap-2">
-                  <Progress value={90} className="h-2 w-32" />
-                  <span className="text-sm">4.5</span>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <span className="text-sm">Facilities</span>
-                <div className="flex items-center gap-2">
-                  <Progress value={90} className="h-2 w-32" />
-                  <span className="text-sm">4.5</span>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <span className="text-sm">Location</span>
-                <div className="flex items-center gap-2">
-                  <Progress value={50} className="h-2 w-32" />
-                  <span className="text-sm">2.5</span>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <span className="text-sm">Room Comfort</span>
-                <div className="flex items-center gap-2">
-                  <Progress value={50} className="h-2 w-32" />
-                  <span className="text-sm">2.5</span>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <span className="text-sm">Service</span>
-                <div className="flex items-center gap-2">
-                  <Progress value={76} className="h-2 w-32" />
-                  <span className="text-sm">3.8</span>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <span className="text-sm">Value for money</span>
-                <div className="flex items-center gap-2">
-                  <Progress value={76} className="h-2 w-32" />
-                  <span className="text-sm">3.8</span>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    </>
-  )
-
-  const renderBillingSystem = () => (
-    <>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold">Billing System</h2>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" className="flex items-center gap-1">
-            <Filter className="h-4 w-4" />
-            Filter
-          </Button>
-          <Button variant="outline" size="sm" className="flex items-center gap-1">
-            <Download className="h-4 w-4" />
-            Export
-          </Button>
-          <Button size="sm" className="flex items-center gap-1">
-            <Plus className="h-4 w-4" />
-            New Invoice
-          </Button>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <Card>
-          <CardContent className="p-4 flex items-center">
-            <div className="bg-blue-50 p-3 rounded-full mr-4">
-              <CreditCard className="h-6 w-6 text-blue-500" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Total Revenue</p>
-              <h3 className="text-2xl font-bold">Rs.125,000</h3>
-              <p className="text-xs text-green-600">+12% from last month</p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 flex items-center">
-            <div className="bg-green-50 p-3 rounded-full mr-4">
-              <DollarSign className="h-6 w-6 text-green-500" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Paid Invoices</p>
-              <h3 className="text-2xl font-bold">Rs.98,500</h3>
-              <p className="text-xs text-green-600">78% of total</p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 flex items-center">
-            <div className="bg-amber-50 p-3 rounded-full mr-4">
-              <Clock className="h-6 w-6 text-amber-500" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Pending Payments</p>
-              <h3 className="text-2xl font-bold">Rs.26,500</h3>
-              <p className="text-xs text-amber-600">22% of total</p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Card className="mb-6">
-        <CardHeader className="p-4 pb-0">
-          <CardTitle className="text-base font-medium">Recent Invoices</CardTitle>
-        </CardHeader>
-        <CardContent className="p-4">
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Invoice ID</TableHead>
-                  <TableHead>Guest</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Amount</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {invoices.map((invoice) => (
-                  <TableRow key={invoice.id}>
-                    <TableCell className="font-medium">{invoice.id}</TableCell>
-                    <TableCell>{invoice.guest}</TableCell>
-                    <TableCell>{invoice.date}</TableCell>
-                    <TableCell>{invoice.amount}</TableCell>
-                    <TableCell>
-                      <Badge variant={invoice.status === "Paid" ? "success" : "warning"}>{invoice.status}</Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem
-                            onClick={() => {
-                              toast({
-                                title: "Invoice details",
-                                description: `Viewing details for invoice ${invoice.id}`,
-                              })
-                            }}
-                          >
-                            View Details
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => {
-                              toast({
-                                title: "Invoice printed",
-                                description: `Invoice ${invoice.id} sent to printer`,
-                              })
-                            }}
-                          >
-                            <Printer className="h-4 w-4 mr-2" />
-                            Print
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => {
-                              toast({
-                                title: "Invoice downloaded",
-                                description: `Invoice ${invoice.id} downloaded as PDF`,
-                              })
-                            }}
-                          >
-                            <Download className="h-4 w-4 mr-2" />
-                            Download
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            onClick={() => {
-                              toast({
-                                title: "Payment reminder sent",
-                                description: `Reminder sent to ${invoice.guest}`,
-                              })
-                            }}
-                          >
-                            Send Reminder
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button className="mb-6">Create New Invoice</Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-[600px]">
-          <DialogHeader>
-            <DialogTitle>Create New Invoice</DialogTitle>
-            <DialogDescription>Create a new invoice for a guest. Fill in all the required details.</DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="guest" className="text-right">
-                Guest
-              </Label>
-              <Select>
-                <SelectTrigger className="col-span-3">
-                  <SelectValue placeholder="Select guest" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="ram">Ram Kailash</SelectItem>
-                  <SelectItem value="samira">Samira Karki</SelectItem>
-                  <SelectItem value="jeevan">Jeevan Rai</SelectItem>
-                  <SelectItem value="bindu">Bindu Sharma</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="room" className="text-right">
-                Room
-              </Label>
-              <Select>
-                <SelectTrigger className="col-span-3">
-                  <SelectValue placeholder="Select room" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="101">101 - King Room</SelectItem>
-                  <SelectItem value="102">102 - Queen Room</SelectItem>
-                  <SelectItem value="201">201 - Deluxe Room</SelectItem>
-                  <SelectItem value="301">301 - Suite</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="date" className="text-right">
-                Date
-              </Label>
-              <Input id="date" type="date" className="col-span-3" />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="amount" className="text-right">
-                Amount
-              </Label>
-              <Input id="amount" type="number" placeholder="0.00" className="col-span-3" />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="description" className="text-right">
-                Description
-              </Label>
-              <Textarea id="description" placeholder="Invoice description" className="col-span-3" />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button
-              type="submit"
-              onClick={() => {
-                toast({
-                  title: "Invoice created",
-                  description: "New invoice has been created successfully",
-                })
-              }}
-            >
-              Create Invoice
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </>
-  )
-
-  const renderFoodDelivery = () => (
-    <>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold">Food Delivery System</h2>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" className="flex items-center gap-1">
-            <Filter className="h-4 w-4" />
-            Filter
-          </Button>
-          <Button size="sm" className="flex items-center gap-1">
-            <Plus className="h-4 w-4" />
-            New Order
-          </Button>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <Card>
-          <CardContent className="p-4 flex items-center">
-            <div className="bg-blue-50 p-3 rounded-full mr-4">
-              <Utensils className="h-6 w-6 text-blue-500" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Total Orders</p>
-              <h3 className="text-2xl font-bold">42</h3>
-              <p className="text-xs text-green-600">+8% from yesterday</p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 flex items-center">
-            <div className="bg-green-50 p-3 rounded-full mr-4">
-              <ShoppingBag className="h-6 w-6 text-green-500" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Completed</p>
-              <h3 className="text-2xl font-bold">35</h3>
-              <p className="text-xs text-green-600">83% of total</p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 flex items-center">
-            <div className="bg-amber-50 p-3 rounded-full mr-4">
-              <Truck className="h-6 w-6 text-amber-500" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">In Progress</p>
-              <h3 className="text-2xl font-bold">7</h3>
-              <p className="text-xs text-amber-600">17% of total</p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        <div className="md:col-span-2">
-          <Card>
-            <CardHeader className="p-4 pb-0">
-              <CardTitle className="text-base font-medium">Active Orders</CardTitle>
-            </CardHeader>
-            <CardContent className="p-4">
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Order ID</TableHead>
-                      <TableHead>Guest</TableHead>
-                      <TableHead>Room</TableHead>
-                      <TableHead>Items</TableHead>
-                      <TableHead>Total</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {foodOrders.map((order) => (
-                      <TableRow key={order.id}>
-                        <TableCell className="font-medium">{order.id}</TableCell>
-                        <TableCell>{order.guest}</TableCell>
-                        <TableCell>{order.room}</TableCell>
-                        <TableCell>
-                          <div className="flex flex-col">
-                            {order.items.map((item, index) => (
-                              <span key={index} className="text-xs">
-                                {item}
-                              </span>
-                            ))}
-                          </div>
-                        </TableCell>
-                        <TableCell>{order.total}</TableCell>
-                        <TableCell>
-                          <Badge
-                            variant={
-                              order.status === "Delivered"
-                                ? "success"
-                                : order.status === "Preparing"
-                                  ? "warning"
-                                  : "default"
-                            }
-                          >
-                            {order.status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon" className="h-8 w-8">
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem
-                                onClick={() => {
-                                  toast({
-                                    title: "Order details",
-                                    description: `Viewing details for order ${order.id}`,
-                                  })
-                                }}
-                              >
-                                View Details
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={() => {
-                                  toast({
-                                    title: "Order status updated",
-                                    description: `Order ${order.id} marked as delivered`,
-                                  })
-                                }}
-                              >
-                                Mark as Delivered
-                              </DropdownMenuItem>
-                              <DropdownMenuSeparator />
-                              <DropdownMenuItem
-                                onClick={() => {
-                                  toast({
-                                    title: "Order cancelled",
-                                    description: `Order ${order.id} has been cancelled`,
-                                    variant: "destructive",
-                                  })
-                                }}
-                              >
-                                Cancel Order
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-        <div>
-          <Card>
-            <CardHeader className="p-4 pb-0">
-              <CardTitle className="text-base font-medium">Order Distribution</CardTitle>
-            </CardHeader>
-            <CardContent className="p-4">
-              <div className="h-[250px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={foodOrdersData}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      outerRadius={80}
-                      fill="#8884d8"
-                      dataKey="value"
-                      label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                    >
-                      {foodOrdersData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-              <div className="flex flex-wrap justify-center gap-4 mt-4">
-                {foodOrdersData.map((entry, index) => (
-                  <div key={index} className="flex items-center">
-                    <div
-                      className="w-3 h-3 rounded-full mr-1"
-                      style={{ backgroundColor: COLORS[index % COLORS.length] }}
-                    ></div>
-                    <span className="text-xs">
-                      {entry.name}: {entry.value}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button className="mb-6">Place New Order</Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-[600px]">
-          <DialogHeader>
-            <DialogTitle>Place New Food Order</DialogTitle>
-            <DialogDescription>Create a new food order for a guest. Select items from the menu.</DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="guest" className="text-right">
-                Guest
-              </Label>
-              <Select>
-                <SelectTrigger className="col-span-3">
-                  <SelectValue placeholder="Select guest" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="ram">Ram Kailash - Room 101</SelectItem>
-                  <SelectItem value="samira">Samira Karki - Room 205</SelectItem>
-                  <SelectItem value="jeevan">Jeevan Rai - Room 310</SelectItem>
-                  <SelectItem value="bindu">Bindu Sharma - Room 402</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label className="text-right">Menu Items</Label>
-              <div className="col-span-3 border rounded-md p-3 space-y-2">
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="item1" />
-                  <Label htmlFor="item1" className="flex justify-between w-full">
-                    <span>Chicken Curry</span>
-                    <span>Rs.450</span>
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="item2" />
-                  <Label htmlFor="item2" className="flex justify-between w-full">
-                    <span>Vegetable Pasta</span>
-                    <span>Rs.350</span>
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="item3" />
-                  <Label htmlFor="item3" className="flex justify-between w-full">
-                    <span>Club Sandwich</span>
-                    <span>Rs.250</span>
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="item4" />
-                  <Label htmlFor="item4" className="flex justify-between w-full">
-                    <span>Naan Bread</span>
-                    <span>Rs.50</span>
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="item5" />
-                  <Label htmlFor="item5" className="flex justify-between w-full">
-                    <span>Rice</span>
-                    <span>Rs.100</span>
-                  </Label>
-                </div>
-              </div>
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="special" className="text-right">
-                Special Instructions
-              </Label>
-              <Textarea id="special" placeholder="Any special requests" className="col-span-3" />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button
-              type="submit"
-              onClick={() => {
-                toast({
-                  title: "Order placed",
-                  description: "Food order has been placed successfully",
-                })
-              }}
-            >
-              Place Order
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </>
-  )
+  // Format date
+  const formatDate = (date: Date) => {
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    })
+  }
 
   return (
-    <div className="flex h-screen bg-gray-100">
-      {/* Mobile Sidebar Toggle */}
-      {isMobile && (
-        <Button
-          variant="outline"
-          size="icon"
-          className="fixed bottom-4 right-4 z-50 rounded-full h-12 w-12 shadow-lg bg-white"
-          onClick={() => setSidebarOpen(true)}
-        >
-          <Menu className="h-6 w-6" />
-        </Button>
+    <div
+      className={`${theme} min-h-screen bg-gradient-to-br from-black to-slate-900 text-slate-100 relative overflow-hidden`}
+    >
+      {/* Background particle effect */}
+      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full opacity-30" />
+
+      {/* Loading overlay */}
+      {isLoading && (
+        <div className="absolute inset-0 bg-black/80 flex items-center justify-center z-50">
+          <div className="flex flex-col items-center">
+            <div className="relative w-24 h-24">
+              <div className="absolute inset-0 border-4 border-cyan-500/30 rounded-full animate-ping"></div>
+              <div className="absolute inset-2 border-4 border-t-cyan-500 border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin"></div>
+              <div className="absolute inset-4 border-4 border-r-purple-500 border-t-transparent border-b-transparent border-l-transparent rounded-full animate-spin-slow"></div>
+              <div className="absolute inset-6 border-4 border-b-blue-500 border-t-transparent border-r-transparent border-l-transparent rounded-full animate-spin-slower"></div>
+              <div className="absolute inset-8 border-4 border-l-green-500 border-t-transparent border-r-transparent border-b-transparent rounded-full animate-spin"></div>
+            </div>
+            <div className="mt-4 text-cyan-500 font-mono text-sm tracking-wider">SYSTEM INITIALIZING</div>
+          </div>
+        </div>
       )}
 
-      {/* Sidebar */}
-      <div
-        className={`${isMobile ? "fixed inset-0 z-50 transform transition-transform duration-300 ease-in-out" : "w-64"} ${isMobile && !sidebarOpen ? "-translate-x-full" : "translate-x-0"} bg-white border-r border-gray-200 flex flex-col`}
-      >
-        {isMobile && (
-          <div className="flex justify-end p-4">
-            <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(false)}>
-              <ChevronLeft className="h-6 w-6" />
-            </Button>
-          </div>
-        )}
-        <div className="p-6 border-b border-gray-200">
-          <h1 className="text-2xl font-semibold text-purple-600">TripyTrip</h1>
-        </div>
-        <div className="flex-1 py-4 overflow-y-auto">
-          <nav className="space-y-1 px-2">
-            <button
-              onClick={() => setActiveSection("dashboard")}
-              className={`flex items-center w-full px-4 py-3 text-sm font-medium rounded-r-md ${activeSection === "dashboard" ? "text-blue-600 bg-blue-50 border-l-4 border-blue-600" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"}`}
-            >
-              <BarChart className="mr-3 h-5 w-5" />
-              Dashboard
-            </button>
-            <button
-              onClick={() => setActiveSection("check-in-out")}
-              className={`flex items-center w-full px-4 py-3 text-sm font-medium rounded-r-md ${activeSection === "check-in-out" ? "text-blue-600 bg-blue-50 border-l-4 border-blue-600" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"}`}
-            >
-              <CalendarIcon className="mr-3 h-5 w-5" />
-              Check In-Out
-            </button>
-            <button
-              onClick={() => setActiveSection("rooms")}
-              className={`flex items-center w-full px-4 py-3 text-sm font-medium rounded-r-md ${activeSection === "rooms" ? "text-blue-600 bg-blue-50 border-l-4 border-blue-600" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"}`}
-            >
-              <Home className="mr-3 h-5 w-5" />
-              Rooms
-            </button>
-            <button
-              onClick={() => setActiveSection("messages")}
-              className={`flex items-center w-full px-4 py-3 text-sm font-medium rounded-r-md ${activeSection === "messages" ? "text-blue-600 bg-blue-50 border-l-4 border-blue-600" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"}`}
-            >
-              <MessageSquare className="mr-3 h-5 w-5" />
-              Messages
-            </button>
-            <button
-              onClick={() => setActiveSection("customer-review")}
-              className={`flex items-center w-full px-4 py-3 text-sm font-medium rounded-r-md ${activeSection === "customer-review" ? "text-blue-600 bg-blue-50 border-l-4 border-blue-600" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"}`}
-            >
-              <Star className="mr-3 h-5 w-5" />
-              Customer Review
-            </button>
-            <button
-              onClick={() => setActiveSection("billing")}
-              className={`flex items-center w-full px-4 py-3 text-sm font-medium rounded-r-md ${activeSection === "billing" ? "text-blue-600 bg-blue-50 border-l-4 border-blue-600" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"}`}
-            >
-              <CreditCard className="mr-3 h-5 w-5" />
-              Billing System
-            </button>
-            <button
-              onClick={() => setActiveSection("food-delivery")}
-              className={`flex items-center w-full px-4 py-3 text-sm font-medium rounded-r-md ${activeSection === "food-delivery" ? "text-blue-600 bg-blue-50 border-l-4 border-blue-600" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"}`}
-            >
-              <Utensils className="mr-3 h-5 w-5" />
-              Food Delivery
-            </button>
-            <button
-              onClick={() => setActiveSection("premium")}
-              className={`flex items-center w-full px-4 py-3 text-sm font-medium rounded-r-md ${activeSection === "premium" ? "text-blue-600 bg-blue-50 border-l-4 border-blue-600" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"}`}
-            >
-              <Award className="mr-3 h-5 w-5" />
-              Try Premium Version
-            </button>
-          </nav>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="container mx-auto p-4 relative z-10">
         {/* Header */}
-        <header className="bg-white border-b border-gray-200 flex items-center justify-between px-4 py-4 md:px-6">
-          <div className="flex items-center">
-            {isMobile && (
-              <Button variant="ghost" size="icon" className="mr-2" onClick={() => setSidebarOpen(true)}>
-                <Menu className="h-5 w-5" />
-              </Button>
-            )}
-            <h1 className="text-xl font-semibold text-gray-800">
-              {activeSection === "dashboard"
-                ? "Dashboard"
-                : activeSection === "check-in-out"
-                  ? "Check In-Out"
-                  : activeSection === "rooms"
-                    ? "Rooms"
-                    : activeSection === "messages"
-                      ? "Messages"
-                      : activeSection === "customer-review"
-                        ? "Customer Review"
-                        : activeSection === "billing"
-                          ? "Billing System"
-                          : activeSection === "food-delivery"
-                            ? "Food Delivery"
-                            : "Premium Version"}
-            </h1>
+        <header className="flex items-center justify-between py-4 border-b border-slate-700/50 mb-6">
+          <div className="flex items-center space-x-2">
+            <Hexagon className="h-8 w-8 text-cyan-500" />
+            <span className="text-xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+              NEXUS OS
+            </span>
           </div>
-          <div className="flex items-center space-x-4">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="flex items-center gap-2 px-3 py-2 h-auto">
-                  <Image
-                    src="/placeholder.svg?height=24&width=24"
-                    width={24}
-                    height={24}
-                    alt="Hotel"
-                    className="rounded"
-                  />
-                  <span className="hidden md:inline">Hotel Hilton Garden Inn</span>
-                  <ChevronDown className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem>Hotel Marriott</DropdownMenuItem>
-                <DropdownMenuItem>Hotel Hyatt</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
 
-            <Button variant="ghost" size="icon" className="relative">
-              <Bell className="h-5 w-5" />
-              <span className="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full"></span>
-            </Button>
+          <div className="flex items-center space-x-6">
+            <div className="hidden md:flex items-center space-x-1 bg-slate-800/50 rounded-full px-3 py-1.5 border border-slate-700/50 backdrop-blur-sm">
+              <Search className="h-4 w-4 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Search systems..."
+                className="bg-transparent border-none focus:outline-none text-sm w-40 placeholder:text-slate-500"
+              />
+            </div>
 
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage src="/placeholder.svg?height=32&width=32" alt="User" />
-                    <AvatarFallback>U</AvatarFallback>
-                  </Avatar>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem>Profile</DropdownMenuItem>
-                <DropdownMenuItem>Settings</DropdownMenuItem>
-                <DropdownMenuItem>Logout</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <div className="flex items-center space-x-3">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="ghost" size="icon" className="relative text-slate-400 hover:text-slate-100">
+                      <Bell className="h-5 w-5" />
+                      <span className="absolute -top-1 -right-1 h-2 w-2 bg-cyan-500 rounded-full animate-pulse"></span>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Notifications</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={toggleTheme}
+                      className="text-slate-400 hover:text-slate-100"
+                    >
+                      {theme === "dark" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Toggle theme</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              <Avatar>
+                <AvatarImage src="/placeholder.svg?height=40&width=40" alt="User" />
+                <AvatarFallback className="bg-slate-700 text-cyan-500">CM</AvatarFallback>
+              </Avatar>
+            </div>
           </div>
         </header>
 
-        {/* Main Content */}
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50">
-          {activeSection === "dashboard" && renderDashboard()}
-          {activeSection === "billing" && renderBillingSystem()}
-          {activeSection === "food-delivery" && renderFoodDelivery()}
-          {activeSection !== "dashboard" && activeSection !== "billing" && activeSection !== "food-delivery" && (
-            <div className="flex items-center justify-center h-full">
-              <Card className="w-full max-w-md">
-                <CardHeader>
-                  <CardTitle>Coming Soon</CardTitle>
-                  <CardDescription>This section is under development and will be available soon.</CardDescription>
+        {/* Main content */}
+        <div className="grid grid-cols-12 gap-6">
+          {/* Sidebar */}
+          <div className="col-span-12 md:col-span-3 lg:col-span-2">
+            <Card className="bg-slate-900/50 border-slate-700/50 backdrop-blur-sm h-full">
+              <CardContent className="p-4">
+                <nav className="space-y-2">
+                  <NavItem icon={Command} label="Dashboard" active />
+                  <NavItem icon={Activity} label="Diagnostics" />
+                  <NavItem icon={Database} label="Data Center" />
+                  <NavItem icon={Globe} label="Network" />
+                  <NavItem icon={Shield} label="Security" />
+                  <NavItem icon={Terminal} label="Console" />
+                  <NavItem icon={MessageSquare} label="Communications" />
+                  <NavItem icon={Settings} label="Settings" />
+                </nav>
+
+                <div className="mt-8 pt-6 border-t border-slate-700/50">
+                  <div className="text-xs text-slate-500 mb-2 font-mono">SYSTEM STATUS</div>
+                  <div className="space-y-3">
+                    <StatusItem label="Core Systems" value={systemStatus} color="cyan" />
+                    <StatusItem label="Security" value={securityLevel} color="green" />
+                    <StatusItem label="Network" value={networkStatus} color="blue" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Main dashboard */}
+          <div className="col-span-12 md:col-span-9 lg:col-span-7">
+            <div className="grid gap-6">
+              {/* System overview */}
+              <Card className="bg-slate-900/50 border-slate-700/50 backdrop-blur-sm overflow-hidden">
+                <CardHeader className="border-b border-slate-700/50 pb-3">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-slate-100 flex items-center">
+                      <Activity className="mr-2 h-5 w-5 text-cyan-500" />
+                      System Overview
+                    </CardTitle>
+                    <div className="flex items-center space-x-2">
+                      <Badge variant="outline" className="bg-slate-800/50 text-cyan-400 border-cyan-500/50 text-xs">
+                        <div className="h-1.5 w-1.5 rounded-full bg-cyan-500 mr-1 animate-pulse"></div>
+                        LIVE
+                      </Badge>
+                      <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400">
+                        <RefreshCw className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="p-6">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <MetricCard
+                      title="CPU Usage"
+                      value={cpuUsage}
+                      icon={Cpu}
+                      trend="up"
+                      color="cyan"
+                      detail="3.8 GHz | 12 Cores"
+                    />
+                    <MetricCard
+                      title="Memory"
+                      value={memoryUsage}
+                      icon={HardDrive}
+                      trend="stable"
+                      color="purple"
+                      detail="16.4 GB / 24 GB"
+                    />
+                    <MetricCard
+                      title="Network"
+                      value={networkStatus}
+                      icon={Wifi}
+                      trend="down"
+                      color="blue"
+                      detail="1.2 GB/s | 42ms"
+                    />
+                  </div>
+
+                  <div className="mt-8">
+                    <Tabs defaultValue="performance" className="w-full">
+                      <div className="flex items-center justify-between mb-4">
+                        <TabsList className="bg-slate-800/50 p-1">
+                          <TabsTrigger
+                            value="performance"
+                            className="data-[state=active]:bg-slate-700 data-[state=active]:text-cyan-400"
+                          >
+                            Performance
+                          </TabsTrigger>
+                          <TabsTrigger
+                            value="processes"
+                            className="data-[state=active]:bg-slate-700 data-[state=active]:text-cyan-400"
+                          >
+                            Processes
+                          </TabsTrigger>
+                          <TabsTrigger
+                            value="storage"
+                            className="data-[state=active]:bg-slate-700 data-[state=active]:text-cyan-400"
+                          >
+                            Storage
+                          </TabsTrigger>
+                        </TabsList>
+
+                        <div className="flex items-center space-x-2 text-xs text-slate-400">
+                          <div className="flex items-center">
+                            <div className="h-2 w-2 rounded-full bg-cyan-500 mr-1"></div>
+                            CPU
+                          </div>
+                          <div className="flex items-center">
+                            <div className="h-2 w-2 rounded-full bg-purple-500 mr-1"></div>
+                            Memory
+                          </div>
+                          <div className="flex items-center">
+                            <div className="h-2 w-2 rounded-full bg-blue-500 mr-1"></div>
+                            Network
+                          </div>
+                        </div>
+                      </div>
+
+                      <TabsContent value="performance" className="mt-0">
+                        <div className="h-64 w-full relative bg-slate-800/30 rounded-lg border border-slate-700/50 overflow-hidden">
+                          <PerformanceChart />
+                          <div className="absolute bottom-4 right-4 bg-slate-900/80 backdrop-blur-sm rounded-md px-3 py-2 border border-slate-700/50">
+                            <div className="text-xs text-slate-400">System Load</div>
+                            <div className="text-lg font-mono text-cyan-400">{cpuUsage}%</div>
+                          </div>
+                        </div>
+                      </TabsContent>
+
+                      <TabsContent value="processes" className="mt-0">
+                        <div className="bg-slate-800/30 rounded-lg border border-slate-700/50 overflow-hidden">
+                          <div className="grid grid-cols-12 text-xs text-slate-400 p-3 border-b border-slate-700/50 bg-slate-800/50">
+                            <div className="col-span-1">PID</div>
+                            <div className="col-span-4">Process</div>
+                            <div className="col-span-2">User</div>
+                            <div className="col-span-2">CPU</div>
+                            <div className="col-span-2">Memory</div>
+                            <div className="col-span-1">Status</div>
+                          </div>
+
+                          <div className="divide-y divide-slate-700/30">
+                            <ProcessRow
+                              pid="1024"
+                              name="system_core.exe"
+                              user="SYSTEM"
+                              cpu={12.4}
+                              memory={345}
+                              status="running"
+                            />
+                            <ProcessRow
+                              pid="1842"
+                              name="nexus_service.exe"
+                              user="SYSTEM"
+                              cpu={8.7}
+                              memory={128}
+                              status="running"
+                            />
+                            <ProcessRow
+                              pid="2156"
+                              name="security_monitor.exe"
+                              user="ADMIN"
+                              cpu={5.2}
+                              memory={96}
+                              status="running"
+                            />
+                            <ProcessRow
+                              pid="3012"
+                              name="network_manager.exe"
+                              user="SYSTEM"
+                              cpu={3.8}
+                              memory={84}
+                              status="running"
+                            />
+                            <ProcessRow
+                              pid="4268"
+                              name="user_interface.exe"
+                              user="USER"
+                              cpu={15.3}
+                              memory={256}
+                              status="running"
+                            />
+                            <ProcessRow
+                              pid="5124"
+                              name="data_analyzer.exe"
+                              user="ADMIN"
+                              cpu={22.1}
+                              memory={512}
+                              status="running"
+                            />
+                          </div>
+                        </div>
+                      </TabsContent>
+
+                      <TabsContent value="storage" className="mt-0">
+                        <div className="bg-slate-800/30 rounded-lg border border-slate-700/50 p-4">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <StorageItem name="System Drive (C:)" total={512} used={324} type="SSD" />
+                            <StorageItem name="Data Drive (D:)" total={2048} used={1285} type="HDD" />
+                            <StorageItem name="Backup Drive (E:)" total={4096} used={1865} type="HDD" />
+                            <StorageItem name="External Drive (F:)" total={1024} used={210} type="SSD" />
+                          </div>
+                        </div>
+                      </TabsContent>
+                    </Tabs>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Security & Alerts */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Card className="bg-slate-900/50 border-slate-700/50 backdrop-blur-sm">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-slate-100 flex items-center text-base">
+                      <Shield className="mr-2 h-5 w-5 text-green-500" />
+                      Security Status
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div className="text-sm text-slate-400">Firewall</div>
+                        <Badge className="bg-green-500/20 text-green-400 border-green-500/50">Active</Badge>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="text-sm text-slate-400">Intrusion Detection</div>
+                        <Badge className="bg-green-500/20 text-green-400 border-green-500/50">Active</Badge>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="text-sm text-slate-400">Encryption</div>
+                        <Badge className="bg-green-500/20 text-green-400 border-green-500/50">Active</Badge>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="text-sm text-slate-400">Threat Database</div>
+                        <div className="text-sm text-cyan-400">
+                          Updated <span className="text-slate-500">12 min ago</span>
+                        </div>
+                      </div>
+
+                      <div className="pt-2 mt-2 border-t border-slate-700/50">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="text-sm font-medium">Security Level</div>
+                          <div className="text-sm text-cyan-400">{securityLevel}%</div>
+                        </div>
+                        <Progress value={securityLevel} className="h-2 bg-slate-700">
+                          <div
+                            className="h-full bg-gradient-to-r from-green-500 to-cyan-500 rounded-full"
+                            style={{ width: `${securityLevel}%` }}
+                          />
+                        </Progress>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-slate-900/50 border-slate-700/50 backdrop-blur-sm">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-slate-100 flex items-center text-base">
+                      <AlertCircle className="mr-2 h-5 w-5 text-amber-500" />
+                      System Alerts
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      <AlertItem
+                        title="Security Scan Complete"
+                        time="14:32:12"
+                        description="No threats detected in system scan"
+                        type="info"
+                      />
+                      <AlertItem
+                        title="Bandwidth Spike Detected"
+                        time="13:45:06"
+                        description="Unusual network activity on port 443"
+                        type="warning"
+                      />
+                      <AlertItem
+                        title="System Update Available"
+                        time="09:12:45"
+                        description="Version 12.4.5 ready to install"
+                        type="update"
+                      />
+                      <AlertItem
+                        title="Backup Completed"
+                        time="04:30:00"
+                        description="Incremental backup to drive E: successful"
+                        type="success"
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Communications */}
+              <Card className="bg-slate-900/50 border-slate-700/50 backdrop-blur-sm">
+                <CardHeader className="pb-2 flex flex-row items-center justify-between">
+                  <CardTitle className="text-slate-100 flex items-center text-base">
+                    <MessageSquare className="mr-2 h-5 w-5 text-blue-500" />
+                    Communications Log
+                  </CardTitle>
+                  <Badge variant="outline" className="bg-slate-800/50 text-blue-400 border-blue-500/50">
+                    4 New Messages
+                  </Badge>
                 </CardHeader>
                 <CardContent>
-                  <p>
-                    The{" "}
-                    {activeSection === "check-in-out"
-                      ? "Check In-Out"
-                      : activeSection === "rooms"
-                        ? "Rooms"
-                        : activeSection === "messages"
-                          ? "Messages"
-                          : activeSection === "customer-review"
-                            ? "Customer Review"
-                            : "Premium"}{" "}
-                    module is currently being built. Please check back later.
-                  </p>
+                  <div className="space-y-3">
+                    <CommunicationItem
+                      sender="System Administrator"
+                      time="15:42:12"
+                      message="Scheduled maintenance will occur at 02:00. All systems will be temporarily offline."
+                      avatar="/placeholder.svg?height=40&width=40"
+                      unread
+                    />
+                    <CommunicationItem
+                      sender="Security Module"
+                      time="14:30:45"
+                      message="Unusual login attempt blocked from IP 192.168.1.45. Added to watchlist."
+                      avatar="/placeholder.svg?height=40&width=40"
+                      unread
+                    />
+                    <CommunicationItem
+                      sender="Network Control"
+                      time="12:15:33"
+                      message="Bandwidth allocation adjusted for priority services during peak hours."
+                      avatar="/placeholder.svg?height=40&width=40"
+                      unread
+                    />
+                    <CommunicationItem
+                      sender="Data Center"
+                      time="09:05:18"
+                      message="Backup verification complete. All data integrity checks passed."
+                      avatar="/placeholder.svg?height=40&width=40"
+                      unread
+                    />
+                  </div>
                 </CardContent>
-                <CardFooter>
-                  <Button onClick={() => setActiveSection("dashboard")}>Return to Dashboard</Button>
+                <CardFooter className="border-t border-slate-700/50 pt-4">
+                  <div className="flex items-center w-full space-x-2">
+                    <input
+                      type="text"
+                      placeholder="Type a message..."
+                      className="flex-1 bg-slate-800/50 border border-slate-700/50 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-cyan-500"
+                    />
+                    <Button size="icon" className="bg-blue-600 hover:bg-blue-700">
+                      <Mic className="h-4 w-4" />
+                    </Button>
+                    <Button size="icon" className="bg-cyan-600 hover:bg-cyan-700">
+                      <MessageSquare className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </CardFooter>
               </Card>
             </div>
-          )}
-        </main>
+          </div>
+
+          {/* Right sidebar */}
+          <div className="col-span-12 lg:col-span-3">
+            <div className="grid gap-6">
+              {/* System time */}
+              <Card className="bg-slate-900/50 border-slate-700/50 backdrop-blur-sm overflow-hidden">
+                <CardContent className="p-0">
+                  <div className="bg-gradient-to-br from-slate-800 to-slate-900 p-6 border-b border-slate-700/50">
+                    <div className="text-center">
+                      <div className="text-xs text-slate-500 mb-1 font-mono">SYSTEM TIME</div>
+                      <div className="text-3xl font-mono text-cyan-400 mb-1">{formatTime(currentTime)}</div>
+                      <div className="text-sm text-slate-400">{formatDate(currentTime)}</div>
+                    </div>
+                  </div>
+                  <div className="p-4">
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="bg-slate-800/50 rounded-md p-3 border border-slate-700/50">
+                        <div className="text-xs text-slate-500 mb-1">Uptime</div>
+                        <div className="text-sm font-mono text-slate-200">14d 06:42:18</div>
+                      </div>
+                      <div className="bg-slate-800/50 rounded-md p-3 border border-slate-700/50">
+                        <div className="text-xs text-slate-500 mb-1">Time Zone</div>
+                        <div className="text-sm font-mono text-slate-200">UTC-08:00</div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Quick actions */}
+              <Card className="bg-slate-900/50 border-slate-700/50 backdrop-blur-sm">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-slate-100 text-base">Quick Actions</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 gap-3">
+                    <ActionButton icon={Shield} label="Security Scan" />
+                    <ActionButton icon={RefreshCw} label="Sync Data" />
+                    <ActionButton icon={Download} label="Backup" />
+                    <ActionButton icon={Terminal} label="Console" />
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Resource allocation */}
+              <Card className="bg-slate-900/50 border-slate-700/50 backdrop-blur-sm">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-slate-100 text-base">Resource Allocation</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div>
+                      <div className="flex items-center justify-between mb-1">
+                        <div className="text-sm text-slate-400">Processing Power</div>
+                        <div className="text-xs text-cyan-400">42% allocated</div>
+                      </div>
+                      <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full"
+                          style={{ width: "42%" }}
+                        ></div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="flex items-center justify-between mb-1">
+                        <div className="text-sm text-slate-400">Memory Allocation</div>
+                        <div className="text-xs text-purple-400">68% allocated</div>
+                      </div>
+                      <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"
+                          style={{ width: "68%" }}
+                        ></div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="flex items-center justify-between mb-1">
+                        <div className="text-sm text-slate-400">Network Bandwidth</div>
+                        <div className="text-xs text-blue-400">35% allocated</div>
+                      </div>
+                      <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full"
+                          style={{ width: "35%" }}
+                        ></div>
+                      </div>
+                    </div>
+
+                    <div className="pt-2 border-t border-slate-700/50">
+                      <div className="flex items-center justify-between text-sm">
+                        <div className="text-slate-400">Priority Level</div>
+                        <div className="flex items-center">
+                          <Slider defaultValue={[3]} max={5} step={1} className="w-24 mr-2" />
+                          <span className="text-cyan-400">3/5</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Environment controls */}
+              <Card className="bg-slate-900/50 border-slate-700/50 backdrop-blur-sm">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-slate-100 text-base">Environment Controls</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <Radio className="text-cyan-500 mr-2 h-4 w-4" />
+                        <Label className="text-sm text-slate-400">Power Management</Label>
+                      </div>
+                      <Switch />
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <Lock className="text-cyan-500 mr-2 h-4 w-4" />
+                        <Label className="text-sm text-slate-400">Security Protocol</Label>
+                      </div>
+                      <Switch defaultChecked />
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <Zap className="text-cyan-500 mr-2 h-4 w-4" />
+                        <Label className="text-sm text-slate-400">Power Saving Mode</Label>
+                      </div>
+                      <Switch />
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <CircleOff className="text-cyan-500 mr-2 h-4 w-4" />
+                        <Label className="text-sm text-slate-400">Auto Shutdown</Label>
+                      </div>
+                      <Switch defaultChecked />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   )
+}
+
+// Component for nav items
+function NavItem({ icon: Icon, label, active }: { icon: LucideIcon; label: string; active?: boolean }) {
+  return (
+    <Button
+      variant="ghost"
+      className={`w-full justify-start ${active ? "bg-slate-800/70 text-cyan-400" : "text-slate-400 hover:text-slate-100"}`}
+    >
+      <Icon className="mr-2 h-4 w-4" />
+      {label}
+    </Button>
+  )
+}
+
+// Component for status items
+function StatusItem({ label, value, color }: { label: string; value: number; color: string }) {
+  const getColor = () => {
+    switch (color) {
+      case "cyan":
+        return "from-cyan-500 to-blue-500"
+      case "green":
+        return "from-green-500 to-emerald-500"
+      case "blue":
+        return "from-blue-500 to-indigo-500"
+      case "purple":
+        return "from-purple-500 to-pink-500"
+      default:
+        return "from-cyan-500 to-blue-500"
+    }
+  }
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-1">
+        <div className="text-xs text-slate-400">{label}</div>
+        <div className="text-xs text-slate-400">{value}%</div>
+      </div>
+      <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden">
+        <div className={`h-full bg-gradient-to-r ${getColor()} rounded-full`} style={{ width: `${value}%` }}></div>
+      </div>
+    </div>
+  )
+}
+
+// Component for metric cards
+function MetricCard({
+  title,
+  value,
+  icon: Icon,
+  trend,
+  color,
+  detail,
+}: {
+  title: string
+  value: number
+  icon: LucideIcon
+  trend: "up" | "down" | "stable"
+  color: string
+  detail: string
+}) {
+  const getColor = () => {
+    switch (color) {
+      case "cyan":
+        return "from-cyan-500 to-blue-500 border-cyan-500/30"
+      case "green":
+        return "from-green-500 to-emerald-500 border-green-500/30"
+      case "blue":
+        return "from-blue-500 to-indigo-500 border-blue-500/30"
+      case "purple":
+        return "from-purple-500 to-pink-500 border-purple-500/30"
+      default:
+        return "from-cyan-500 to-blue-500 border-cyan-500/30"
+    }
+  }
+
+  const getTrendIcon = () => {
+    switch (trend) {
+      case "up":
+        return <BarChart3 className="h-4 w-4 text-amber-500" />
+      case "down":
+        return <BarChart3 className="h-4 w-4 rotate-180 text-green-500" />
+      case "stable":
+        return <LineChart className="h-4 w-4 text-blue-500" />
+      default:
+        return null
+    }
+  }
+
+  return (
+    <div className={`bg-slate-800/50 rounded-lg border ${getColor()} p-4 relative overflow-hidden`}>
+      <div className="flex items-center justify-between mb-2">
+        <div className="text-sm text-slate-400">{title}</div>
+        <Icon className={`h-5 w-5 text-${color}-500`} />
+      </div>
+      <div className="text-2xl font-bold mb-1 bg-gradient-to-r bg-clip-text text-transparent from-slate-100 to-slate-300">
+        {value}%
+      </div>
+      <div className="text-xs text-slate-500">{detail}</div>
+      <div className="absolute bottom-2 right-2 flex items-center">{getTrendIcon()}</div>
+      <div className="absolute -bottom-6 -right-6 h-16 w-16 rounded-full bg-gradient-to-r opacity-20 blur-xl from-cyan-500 to-blue-500"></div>
+    </div>
+  )
+}
+
+// Performance chart component
+function PerformanceChart() {
+  return (
+    <div className="h-full w-full flex items-end justify-between px-4 pt-4 pb-8 relative">
+      {/* Y-axis labels */}
+      <div className="absolute left-2 top-0 h-full flex flex-col justify-between py-4">
+        <div className="text-xs text-slate-500">100%</div>
+        <div className="text-xs text-slate-500">75%</div>
+        <div className="text-xs text-slate-500">50%</div>
+        <div className="text-xs text-slate-500">25%</div>
+        <div className="text-xs text-slate-500">0%</div>
+      </div>
+
+      {/* X-axis grid lines */}
+      <div className="absolute left-0 right-0 top-0 h-full flex flex-col justify-between py-4 px-10">
+        <div className="border-b border-slate-700/30 w-full"></div>
+        <div className="border-b border-slate-700/30 w-full"></div>
+        <div className="border-b border-slate-700/30 w-full"></div>
+        <div className="border-b border-slate-700/30 w-full"></div>
+        <div className="border-b border-slate-700/30 w-full"></div>
+      </div>
+
+      {/* Chart bars */}
+      <div className="flex-1 h-full flex items-end justify-between px-2 z-10">
+        {Array.from({ length: 24 }).map((_, i) => {
+          const cpuHeight = Math.floor(Math.random() * 60) + 20
+          const memHeight = Math.floor(Math.random() * 40) + 40
+          const netHeight = Math.floor(Math.random() * 30) + 30
+
+          return (
+            <div key={i} className="flex space-x-0.5">
+              <div
+                className="w-1 bg-gradient-to-t from-cyan-500 to-cyan-400 rounded-t-sm"
+                style={{ height: `${cpuHeight}%` }}
+              ></div>
+              <div
+                className="w-1 bg-gradient-to-t from-purple-500 to-purple-400 rounded-t-sm"
+                style={{ height: `${memHeight}%` }}
+              ></div>
+              <div
+                className="w-1 bg-gradient-to-t from-blue-500 to-blue-400 rounded-t-sm"
+                style={{ height: `${netHeight}%` }}
+              ></div>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* X-axis labels */}
+      <div className="absolute bottom-0 left-0 right-0 flex justify-between px-10">
+        <div className="text-xs text-slate-500">00:00</div>
+        <div className="text-xs text-slate-500">06:00</div>
+        <div className="text-xs text-slate-500">12:00</div>
+        <div className="text-xs text-slate-500">18:00</div>
+        <div className="text-xs text-slate-500">24:00</div>
+      </div>
+    </div>
+  )
+}
+
+// Process row component
+function ProcessRow({
+  pid,
+  name,
+  user,
+  cpu,
+  memory,
+  status,
+}: {
+  pid: string
+  name: string
+  user: string
+  cpu: number
+  memory: number
+  status: string
+}) {
+  return (
+    <div className="grid grid-cols-12 py-2 px-3 text-sm hover:bg-slate-800/50">
+      <div className="col-span-1 text-slate-500">{pid}</div>
+      <div className="col-span-4 text-slate-300">{name}</div>
+      <div className="col-span-2 text-slate-400">{user}</div>
+      <div className="col-span-2 text-cyan-400">{cpu}%</div>
+      <div className="col-span-2 text-purple-400">{memory} MB</div>
+      <div className="col-span-1">
+        <Badge variant="outline" className="bg-green-500/10 text-green-400 border-green-500/30 text-xs">
+          {status}
+        </Badge>
+      </div>
+    </div>
+  )
+}
+
+// Storage item component
+function StorageItem({
+  name,
+  total,
+  used,
+  type,
+}: {
+  name: string
+  total: number
+  used: number
+  type: string
+}) {
+  const percentage = Math.round((used / total) * 100)
+
+  return (
+    <div className="bg-slate-800/50 rounded-md p-3 border border-slate-700/50">
+      <div className="flex items-center justify-between mb-2">
+        <div className="text-sm text-slate-300">{name}</div>
+        <Badge variant="outline" className="bg-slate-700/50 text-slate-300 border-slate-600/50 text-xs">
+          {type}
+        </Badge>
+      </div>
+      <div className="mb-2">
+        <div className="flex items-center justify-between mb-1">
+          <div className="text-xs text-slate-500">
+            {used} GB / {total} GB
+          </div>
+          <div className="text-xs text-slate-400">{percentage}%</div>
+        </div>
+        <Progress value={percentage} className="h-1.5 bg-slate-700">
+          <div
+            className={`h-full rounded-full ${
+              percentage > 90 ? "bg-red-500" : percentage > 70 ? "bg-amber-500" : "bg-cyan-500"
+            }`}
+            style={{ width: `${percentage}%` }}
+          />
+        </Progress>
+      </div>
+      <div className="flex items-center justify-between text-xs">
+        <div className="text-slate-500">Free: {total - used} GB</div>
+        <Button variant="ghost" size="sm" className="h-6 text-xs px-2 text-slate-400 hover:text-slate-100">
+          Details
+        </Button>
+      </div>
+    </div>
+  )
+}
+
+// Alert item component
+function AlertItem({
+  title,
+  time,
+  description,
+  type,
+}: {
+  title: string
+  time: string
+  description: string
+  type: "info" | "warning" | "error" | "success" | "update"
+}) {
+  const getTypeStyles = () => {
+    switch (type) {
+      case "info":
+        return { icon: Info, color: "text-blue-500 bg-blue-500/10 border-blue-500/30" }
+      case "warning":
+        return { icon: AlertCircle, color: "text-amber-500 bg-amber-500/10 border-amber-500/30" }
+      case "error":
+        return { icon: AlertCircle, color: "text-red-500 bg-red-500/10 border-red-500/30" }
+      case "success":
+        return { icon: Check, color: "text-green-500 bg-green-500/10 border-green-500/30" }
+      case "update":
+        return { icon: Download, color: "text-cyan-500 bg-cyan-500/10 border-cyan-500/30" }
+      default:
+        return { icon: Info, color: "text-blue-500 bg-blue-500/10 border-blue-500/30" }
+    }
+  }
+
+  const { icon: Icon, color } = getTypeStyles()
+
+  return (
+    <div className="flex items-start space-x-3">
+      <div className={`mt-0.5 p-1 rounded-full ${color.split(" ")[1]} ${color.split(" ")[2]}`}>
+        <Icon className={`h-3 w-3 ${color.split(" ")[0]}`} />
+      </div>
+      <div>
+        <div className="flex items-center">
+          <div className="text-sm font-medium text-slate-200">{title}</div>
+          <div className="ml-2 text-xs text-slate-500">{time}</div>
+        </div>
+        <div className="text-xs text-slate-400">{description}</div>
+      </div>
+    </div>
+  )
+}
+
+// Communication item component
+function CommunicationItem({
+  sender,
+  time,
+  message,
+  avatar,
+  unread,
+}: {
+  sender: string
+  time: string
+  message: string
+  avatar: string
+  unread?: boolean
+}) {
+  return (
+    <div className={`flex space-x-3 p-2 rounded-md ${unread ? "bg-slate-800/50 border border-slate-700/50" : ""}`}>
+      <Avatar className="h-8 w-8">
+        <AvatarImage src={avatar} alt={sender} />
+        <AvatarFallback className="bg-slate-700 text-cyan-500">{sender.charAt(0)}</AvatarFallback>
+      </Avatar>
+      <div className="flex-1">
+        <div className="flex items-center justify-between">
+          <div className="text-sm font-medium text-slate-200">{sender}</div>
+          <div className="text-xs text-slate-500">{time}</div>
+        </div>
+        <div className="text-xs text-slate-400 mt-1">{message}</div>
+      </div>
+      {unread && (
+        <div className="flex-shrink-0 self-center">
+          <div className="h-2 w-2 rounded-full bg-cyan-500"></div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// Action button component
+function ActionButton({ icon: Icon, label }: { icon: LucideIcon; label: string }) {
+  return (
+    <Button
+      variant="outline"
+      className="h-auto py-3 px-3 border-slate-700 bg-slate-800/50 hover:bg-slate-700/50 flex flex-col items-center justify-center space-y-1 w-full"
+    >
+      <Icon className="h-5 w-5 text-cyan-500" />
+      <span className="text-xs">{label}</span>
+    </Button>
+  )
+}
+
+// Add missing imports
+function Info(props) {
+  return <AlertCircle {...props} />
+}
+
+function Check(props) {
+  return <Shield {...props} />
 }
 
